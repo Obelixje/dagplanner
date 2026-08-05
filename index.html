@@ -81,6 +81,30 @@
       color: var(--text);
     }
 
+    .date-picker-wrap {
+      position: relative;
+      width: 85%;
+      min-width: 220px;
+    }
+
+    .date-picker-wrap input {
+      width: 100%;
+    }
+
+    #planningDateDisplay {
+      cursor: pointer;
+      font-weight: 600;
+      background: #fff;
+    }
+
+    #planningDate {
+      position: absolute;
+      inset: 0;
+      opacity: 0.01;
+      cursor: pointer;
+      min-height: 42px;
+    }
+
     .score-card {
       display: flex;
       align-items: center;
@@ -349,13 +373,23 @@
         margin-right: 8px;
       }
 
-      input[type="date"] {
+      .date-picker-wrap {
+        display: inline-block;
+        width: auto;
+        min-width: 0;
+      }
+
+      #planningDateDisplay {
         display: inline-block;
         width: auto;
         border: none;
         padding: 0;
         font-weight: 700;
         font-size: 16px;
+      }
+
+      #planningDate {
+        display: none;
       }
 
       .score-card {
@@ -421,7 +455,10 @@
     <section class="topbar">
       <div class="card">
         <label for="planningDate">Datum van de planning</label>
-        <input id="planningDate" type="date" />
+        <div class="date-picker-wrap">
+          <input id="planningDateDisplay" type="text" readonly aria-hidden="true" />
+          <input id="planningDate" type="date" aria-label="Datum van de planning" />
+        </div>
       </div>
 
       <div class="card">
@@ -533,6 +570,7 @@
     const scoreStatusElement = document.getElementById("scoreStatus");
     const progressBarElement = document.getElementById("progressBar");
     const dateInput = document.getElementById("planningDate");
+    const dateDisplayInput = document.getElementById("planningDateDisplay");
     const saveStatusElement = document.getElementById("saveStatus");
     const STORAGE_PREFIX = "dagplanner-";
     const memoryStorage = {};
@@ -635,12 +673,33 @@
       }
     }
 
+    function formatDutchDate(dateValue) {
+      if (!dateValue) return "";
+
+      const [year, month, day] = dateValue.split("-").map(Number);
+      const date = new Date(year, month - 1, day);
+
+      const formatted = new Intl.DateTimeFormat("nl-NL", {
+        weekday: "long",
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      }).format(date);
+
+      return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    }
+
+    function updateDateDisplay() {
+      dateDisplayInput.value = formatDutchDate(dateInput.value);
+    }
+
     function setToday() {
       const today = new Date();
       const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
         .toISOString()
         .split("T")[0];
       dateInput.value = localDate;
+      updateDateDisplay();
     }
 
     function createDurationOptions() {
@@ -771,6 +830,7 @@
     });
 
     dateInput.addEventListener("change", () => {
+      updateDateDisplay();
       rowsContainer.innerHTML = "";
       if (!loadPlanning(false)) {
         addRow("yellow", 1, "Ontbijt / Lunch / avondeten");
