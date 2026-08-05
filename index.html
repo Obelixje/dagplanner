@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dagplanner activiteiten en punten</title>
+  <style>
+    :root {
+      --yellow: #fff3a6;
+      --blue: #bfe3ff;
+      --red: #ffc7c7;
+      --green: #ccefcf;
+      --border: #d8dde6;
+      --text: #243042;
+      --muted: #667085;
+      --ok: #18794e;
+      --warning: #b54708;
+      --danger: #b42318;
+      --background: #f5f7fb;
+      --card: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--background);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: 32px auto;
+      padding: 0 18px 40px;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 30px;
+    }
+
+    .intro {
+      margin-top: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) minmax(260px, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 5px 18px rgba(30, 45, 70, 0.06);
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    input[type="date"],
+    select,
+    input[type="text"] {
+      width: 100%;
+      border: 1px solid #bcc5d3;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 15px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .score-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .score-main {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score-label {
+      margin-top: 7px;
+      color: var(--muted);
+    }
+
+    .score-status {
+      min-width: 150px;
+      text-align: center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: #ecfdf3;
+      color: var(--ok);
+    }
+
+    .score-status.warning {
+      background: #fff7ed;
+      color: var(--warning);
+    }
+
+    .score-status.danger {
+      background: #fef3f2;
+      color: var(--danger);
+    }
+
+    .progress {
+      height: 12px;
+      margin-top: 14px;
+      border-radius: 999px;
+      background: #e8edf3;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #2e8b57;
+      transition: width 0.2s ease, background 0.2s ease;
+    }
+
+    .planner {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 820px;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px 10px;
+      font-size: 14px;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr.yellow td { background: var(--yellow); }
+    tr.blue td { background: var(--blue); }
+    tr.red td { background: var(--red); }
+    tr.green td { background: var(--green); }
+
+    .color-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid rgba(0,0,0,0.15);
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    .dot-yellow { background: #f4d63f; }
+    .dot-blue { background: #4da3e2; }
+    .dot-red { background: #e05858; }
+    .dot-green { background: #55aa66; }
+
+    .points-cell {
+      font-weight: 800;
+      text-align: center;
+      font-size: 17px;
+    }
+
+    .row-actions {
+      text-align: center;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      min-height: 42px;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+
+    .btn-add {
+      margin-top: 16px;
+      background: #2447a5;
+      color: #fff;
+    }
+
+    .btn-remove {
+      background: rgba(255,255,255,0.72);
+      color: #8a1c1c;
+      border: 1px solid rgba(138,28,28,0.25);
+      padding: 8px 10px;
+    }
+
+    .btn-clear,
+    .btn-load,
+    .btn-print {
+      background: #fff;
+      color: #344054;
+      border: 1px solid var(--border);
+    }
+
+    .btn-save {
+      background: #18794e;
+      color: #fff;
+    }
+
+    .btn-load {
+      color: #2447a5;
+    }
+
+    .btn-print {
+      color: #6941c6;
+    }
+
+    .save-status {
+      margin-left: auto;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .save-status.saved {
+      color: var(--ok);
+    }
+
+    .save-status.not-found {
+      color: var(--warning);
+    }
+
+    .footer-actions {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      align-items: center;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .footer-actions button {
+      flex: 0 0 auto;
+      margin: 0;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .explanation {
+      margin-top: 20px;
+      line-height: 1.5;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .score-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 14mm;
+      }
+
+      body {
+        background: #fff;
+        color: #000;
+      }
+
+      .container {
+        margin: 0;
+        padding: 0;
+        max-width: none;
+      }
+
+      h1 {
+        margin-top: 0;
+        font-size: 24px;
+      }
+
+      .intro,
+      .explanation,
+      .legend,
+      .footer-actions,
+      .row-actions,
+      th:last-child,
+      td:last-child {
+        display: none !important;
+      }
+
+      .topbar {
+        display: block;
+        margin: 12px 0 18px;
+      }
+
+      .topbar .card:first-child {
+        padding: 0 0 12px;
+        border: none;
+      }
+
+      .topbar .card:first-child label {
+        display: inline;
+        margin-right: 8px;
+      }
+
+      input[type="date"] {
+        display: inline-block;
+        width: auto;
+        border: none;
+        padding: 0;
+        font-weight: 700;
+        font-size: 16px;
+      }
+
+      .score-card {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .progress {
+        display: none;
+      }
+
+      .card {
+        box-shadow: none;
+        border: 1px solid #aaa;
+        border-radius: 8px;
+      }
+
+      .planner {
+        padding: 0;
+        overflow: visible;
+        border: none;
+      }
+
+      table {
+        min-width: 0;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        border: 1px solid #aaa;
+      }
+
+      select {
+        appearance: none;
+        -webkit-appearance: none;
+        border: none;
+        padding: 0;
+        background: transparent;
+        font-size: 13px;
+      }
+
+      tr.yellow td { background: #fff8c9 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      tr.blue td { background: #d9efff !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      tr.red td { background: #ffe0e0 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      tr.green td { background: #dff4e1 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+      .score-status {
+        border: 1px solid #aaa;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Dagplanner activiteiten</h1>
+    <p class="intro">
+      Plan activiteiten per halfuur. De punten van een activiteit worden vermenigvuldigd
+      met het aantal gekozen halve uren. Het dagmaximum is 29 punten.
+    </p>
+
+    <section class="topbar">
+      <div class="card">
+        <label for="planningDate">Datum van de planning</label>
+        <input id="planningDate" type="date" />
+      </div>
+
+      <div class="card">
+        <div class="score-card">
+          <div>
+            <div class="score-main"><span id="totalPoints">0</span> / 29</div>
+            <div class="score-label">punten gepland</div>
+          </div>
+          <div id="scoreStatus" class="score-status">Nog 29 punten over</div>
+        </div>
+        <div class="progress" aria-label="Voortgang punten">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card planner">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%">Kleur</th>
+            <th style="width: 34%">Activiteit</th>
+            <th style="width: 20%">Duur</th>
+            <th style="width: 14%">Punten</th>
+            <th style="width: 12%">Verwijderen</th>
+          </tr>
+        </thead>
+        <tbody id="activityRows"></tbody>
+      </table>
+
+      <div class="footer-actions">
+        <button class="btn-add" type="button" id="addRowButton">+ Activiteit toevoegen</button>
+        <button class="btn-save" type="button" id="saveButton">Planning opslaan</button>
+        <button class="btn-load" type="button" id="loadButton">Planning ophalen</button>
+        <button class="btn-print" type="button" id="printButton">Dagoverzicht printen</button>
+        <button class="btn-clear" type="button" id="clearButton">Planning leegmaken</button>
+        <span id="saveStatus" class="save-status" aria-live="polite"></span>
+      </div>
+
+      <div class="legend">
+        <span><i class="color-dot dot-yellow"></i>Geel: 1 punt per halfuur</span>
+        <span><i class="color-dot dot-blue"></i>Blauw: 2 punten per halfuur</span>
+        <span><i class="color-dot dot-red"></i>Rood: 3 punten per halfuur</span>
+        <span><i class="color-dot dot-green"></i>Groen: 0 punten per halfuur</span>
+      </div>
+    </section>
+
+    <p class="explanation">
+      Voorbeeld: twee uur paardrijles geven is vier keer een halfuur.
+      Bij 3 punten per halfuur kost dit 4 × 3 = 12 punten.
+    </p>
+  </main>
+
+  <script>
+    const MAX_POINTS = 29;
+
+    const activityGroups = {
+      yellow: {
+        label: "Geel – 1 punt",
+        points: 1,
+        activities: [
+          "Ontbijt / Lunch / avondeten",
+          "Vissen voeren / planten water geven",
+          "Licht huishoudelijke werkzaamheden",
+          "Voorbereiden activiteiten buitenshuis",
+          "Tuinieren licht",
+          "Zelf auto rijden < 1/2 uur",
+          "Meerijden in auto"
+        ]
+      },
+      blue: {
+        label: "Blauw – 2 punten",
+        points: 2,
+        activities: [
+          "Opstaan",
+          "Wassen en aankleden",
+          "Tuinieren zwaar",
+          "Honden uitlaten licht",
+          "Boodschappen",
+          "Fietsen"
+        ]
+      },
+      red: {
+        label: "Rood – 3 punten",
+        points: 3,
+        activities: [
+          "Zwaar huishoudelijke werkzaamheden",
+          "Bezoek arts / therapie",
+          "Honden uitlaten in de avond",
+          "Animatie maken",
+          "Bezoek ontvangen / brengen",
+          "Paardrijles geven",
+          "Zelf autorijden > 1/2 uur"
+        ]
+      },
+      green: {
+        label: "Groen – 0 punten",
+        points: 0,
+        activities: [
+          "Thee drinken",
+          "Slapen op de bank",
+          "TV kijken"
+        ]
+      }
+    };
+
+    const rowsContainer = document.getElementById("activityRows");
+    const totalPointsElement = document.getElementById("totalPoints");
+    const scoreStatusElement = document.getElementById("scoreStatus");
+    const progressBarElement = document.getElementById("progressBar");
+    const dateInput = document.getElementById("planningDate");
+    const saveStatusElement = document.getElementById("saveStatus");
+    const STORAGE_PREFIX = "dagplanner-";
+    const memoryStorage = {};
+    let storageAvailable = true;
+
+    function safeStorageGet(key) {
+      try {
+        return window.localStorage.getItem(key);
+      } catch (error) {
+        storageAvailable = false;
+        return Object.prototype.hasOwnProperty.call(memoryStorage, key)
+          ? memoryStorage[key]
+          : null;
+      }
+    }
+
+    function safeStorageSet(key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+        storageAvailable = true;
+        return true;
+      } catch (error) {
+        storageAvailable = false;
+        memoryStorage[key] = value;
+        return false;
+      }
+    }
+
+    function storageKey(date) {
+      return `${STORAGE_PREFIX}${date}`;
+    }
+
+    function showSaveStatus(message, className = "") {
+      saveStatusElement.textContent = message;
+      saveStatusElement.className = `save-status ${className}`.trim();
+    }
+
+    function getPlanningData() {
+      return Array.from(rowsContainer.querySelectorAll("tr")).map(row => ({
+        color: row.querySelector(".color-select").value,
+        activity: row.querySelector(".activity-select").value,
+        duration: Number(row.querySelector(".duration-select").value)
+      }));
+    }
+
+    function savePlanning() {
+      const date = dateInput.value;
+      if (!date) {
+        showSaveStatus("Kies eerst een datum.", "not-found");
+        return;
+      }
+
+      const planning = {
+        date,
+        rows: getPlanningData(),
+        savedAt: new Date().toISOString()
+      };
+
+      const permanentlySaved = safeStorageSet(storageKey(date), JSON.stringify(planning));
+      if (permanentlySaved) {
+        showSaveStatus("Planning opgeslagen voor deze datum.", "saved");
+      } else {
+        showSaveStatus("Tijdelijk opgeslagen. Open de planner in Safari voor blijvende opslag.", "not-found");
+      }
+    }
+
+    function loadPlanning(showMessage = true) {
+      const date = dateInput.value;
+      if (!date) {
+        if (showMessage) showSaveStatus("Kies eerst een datum.", "not-found");
+        return false;
+      }
+
+      const saved = safeStorageGet(storageKey(date));
+      if (!saved) {
+        if (showMessage) showSaveStatus("Voor deze datum is nog niets opgeslagen.", "not-found");
+        return false;
+      }
+
+      try {
+        const planning = JSON.parse(saved);
+        rowsContainer.innerHTML = "";
+
+        planning.rows.forEach(item => {
+          const validColor = activityGroups[item.color] ? item.color : "yellow";
+          const validActivity = activityGroups[validColor].activities.includes(item.activity)
+            ? item.activity
+            : activityGroups[validColor].activities[0];
+          addRow(validColor, item.duration || 1, validActivity);
+        });
+
+        if (planning.rows.length === 0) addRow();
+        updateTotals();
+
+        if (showMessage) showSaveStatus("Opgeslagen planning opgehaald.", "saved");
+        return true;
+      } catch (error) {
+        if (showMessage) showSaveStatus("De opgeslagen planning kon niet worden gelezen.", "not-found");
+        return false;
+      }
+    }
+
+    function setToday() {
+      const today = new Date();
+      const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+        .toISOString()
+        .split("T")[0];
+      dateInput.value = localDate;
+    }
+
+    function createDurationOptions() {
+      let options = "";
+      for (let halfHours = 1; halfHours <= 16; halfHours++) {
+        const hours = halfHours / 2;
+        const label = Number.isInteger(hours)
+          ? `${hours} uur`
+          : `${Math.floor(hours)} uur 30 min`;
+
+        options += `<option value="${halfHours}">${label} (${halfHours} × 30 min)</option>`;
+      }
+      return options;
+    }
+
+    function createColorOptions(selectedColor = "yellow") {
+      return Object.entries(activityGroups)
+        .map(([key, group]) =>
+          `<option value="${key}" ${key === selectedColor ? "selected" : ""}>${group.label}</option>`
+        )
+        .join("");
+    }
+
+    function createActivityOptions(color, selectedActivity = "") {
+      return activityGroups[color].activities
+        .map(activity =>
+          `<option value="${activity}" ${activity === selectedActivity ? "selected" : ""}>${activity}</option>`
+        )
+        .join("");
+    }
+
+    function addRow(color = "yellow", duration = 1, activity = "") {
+      const row = document.createElement("tr");
+      row.className = color;
+
+      const selectedActivity = activity || activityGroups[color].activities[0];
+
+      row.innerHTML = `
+        <td>
+          <select class="color-select" aria-label="Kleurcategorie">
+            ${createColorOptions(color)}
+          </select>
+        </td>
+        <td>
+          <select class="activity-select" aria-label="Activiteit">
+            ${createActivityOptions(color, selectedActivity)}
+          </select>
+        </td>
+        <td>
+          <select class="duration-select" aria-label="Duur">
+            ${createDurationOptions()}
+          </select>
+        </td>
+        <td class="points-cell">0</td>
+        <td class="row-actions">
+          <button type="button" class="btn-remove" aria-label="Activiteit verwijderen">✕</button>
+        </td>
+      `;
+
+      row.querySelector(".duration-select").value = duration;
+
+      row.querySelector(".color-select").addEventListener("change", event => {
+        const newColor = event.target.value;
+        row.className = newColor;
+        row.querySelector(".activity-select").innerHTML = createActivityOptions(newColor);
+        updateTotals();
+      });
+
+      row.querySelector(".activity-select").addEventListener("change", updateTotals);
+      row.querySelector(".duration-select").addEventListener("change", updateTotals);
+
+      row.querySelector(".btn-remove").addEventListener("click", () => {
+        row.remove();
+        updateTotals();
+      });
+
+      rowsContainer.appendChild(row);
+      updateTotals();
+    }
+
+    function updateTotals() {
+      let total = 0;
+
+      rowsContainer.querySelectorAll("tr").forEach(row => {
+        const color = row.querySelector(".color-select").value;
+        const durationHalfHours = Number(row.querySelector(".duration-select").value);
+        const points = activityGroups[color].points * durationHalfHours;
+
+        row.querySelector(".points-cell").textContent = points;
+        total += points;
+      });
+
+      totalPointsElement.textContent = total;
+
+      const remaining = MAX_POINTS - total;
+      const percentage = Math.min((total / MAX_POINTS) * 100, 100);
+      progressBarElement.style.width = `${percentage}%`;
+
+      scoreStatusElement.classList.remove("warning", "danger");
+
+      if (total > MAX_POINTS) {
+        scoreStatusElement.textContent = `${total - MAX_POINTS} punten te veel`;
+        scoreStatusElement.classList.add("danger");
+        progressBarElement.style.background = "#c93b32";
+      } else if (total >= 24) {
+        scoreStatusElement.textContent = `Nog ${remaining} punten over`;
+        scoreStatusElement.classList.add("warning");
+        progressBarElement.style.background = "#e58b22";
+      } else {
+        scoreStatusElement.textContent = `Nog ${remaining} punten over`;
+        progressBarElement.style.background = "#2e8b57";
+      }
+    }
+
+    document.getElementById("addRowButton").addEventListener("click", () => {
+      addRow();
+      showSaveStatus("Wijzigingen zijn nog niet opgeslagen.");
+    });
+
+    document.getElementById("saveButton").addEventListener("click", savePlanning);
+    document.getElementById("loadButton").addEventListener("click", () => loadPlanning(true));
+    document.getElementById("printButton").addEventListener("click", () => window.print());
+
+    document.getElementById("clearButton").addEventListener("click", () => {
+      rowsContainer.innerHTML = "";
+      addRow();
+      showSaveStatus("Planning leeggemaakt; nog niet opgeslagen.");
+    });
+
+    dateInput.addEventListener("change", () => {
+      rowsContainer.innerHTML = "";
+      if (!loadPlanning(false)) {
+        addRow("yellow", 1, "Ontbijt / Lunch / avondeten");
+        addRow("blue", 1, "Wassen en aankleden");
+        showSaveStatus("Nieuwe, nog niet opgeslagen planning.");
+      } else {
+        showSaveStatus("Opgeslagen planning voor deze datum geladen.", "saved");
+      }
+    });
+
+    rowsContainer.addEventListener("change", () => {
+      showSaveStatus("Wijzigingen zijn nog niet opgeslagen.");
+    });
+
+    setToday();
+    try {
+      const testKey = STORAGE_PREFIX + "test";
+      window.localStorage.setItem(testKey, "1");
+      window.localStorage.removeItem(testKey);
+    } catch (error) {
+      storageAvailable = false;
+    }
+
+    if (!loadPlanning(false)) {
+      addRow("yellow", 1, "Ontbijt / Lunch / avondeten");
+      addRow("blue", 1, "Wassen en aankleden");
+    } else {
+      showSaveStatus("Opgeslagen planning voor vandaag geladen.", "saved");
+    }
+  </script>
+</body>
+</html>
