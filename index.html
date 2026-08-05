@@ -237,12 +237,23 @@
 
     .footer-actions button { flex: 0 0 auto; }
 
-    .save-status {
-      margin-left: auto;
+    .status-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-top: 10px;
+      min-height: 20px;
       font-size: 14px;
+      color: var(--muted);
+    }
+
+    .status-row strong {
+      color: var(--text);
+    }
+
+    .save-status {
       font-weight: 700;
       color: var(--muted);
-      min-width: max-content;
     }
 
     .save-status.saved { color: var(--ok); }
@@ -382,7 +393,7 @@
       .container { margin: 0; padding: 0; max-width: none; }
       h1 { margin-top: 0; font-size: 24px; }
 
-      .intro, .explanation, .legend, .footer-actions, .row-actions,
+      .intro, .explanation, .legend, .footer-actions, .status-row, .row-actions,
       .drag-col, .catalog-card, .drag-help,
       th:last-child, td:last-child {
         display: none !important;
@@ -469,6 +480,9 @@
         <button class="btn-load" type="button" id="loadButton">Planning ophalen</button>
         <button class="btn-print" type="button" id="printButton">Dagoverzicht printen</button>
         <button class="btn-clear" type="button" id="clearButton">Planning leegmaken</button>
+      </div>
+      <div class="status-row">
+        <strong>Status:</strong>
         <span id="saveStatus" class="save-status" aria-live="polite"></span>
       </div>
 
