@@ -17,12 +17,10 @@
       --warning: #b54708;
       --danger: #b42318;
       --background: #f5f7fb;
-      --card: #ffffff;
+      --card: #fff;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -32,21 +30,20 @@
     }
 
     .container {
-      max-width: 1050px;
+      max-width: 1120px;
       margin: 32px auto;
       padding: 0 18px 40px;
     }
 
-    h1 {
-      margin-bottom: 8px;
-      font-size: 30px;
-    }
+    h1 { margin-bottom: 8px; font-size: 30px; }
+    h2 { margin: 0 0 8px; font-size: 21px; }
 
-    .intro {
-      margin-top: 0;
+    .intro, .section-intro, .explanation {
       color: var(--muted);
       line-height: 1.5;
     }
+
+    .intro { margin-top: 0; }
 
     .topbar {
       display: grid;
@@ -60,7 +57,7 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 18px;
-      box-shadow: 0 5px 18px rgba(30, 45, 70, 0.06);
+      box-shadow: 0 5px 18px rgba(30,45,70,.06);
     }
 
     label {
@@ -69,9 +66,7 @@
       margin-bottom: 8px;
     }
 
-    input[type="date"],
-    select,
-    input[type="text"] {
+    input[type="date"], select, input[type="text"] {
       width: 100%;
       border: 1px solid #bcc5d3;
       border-radius: 8px;
@@ -87,9 +82,7 @@
       min-width: 220px;
     }
 
-    .date-picker-wrap input {
-      width: 100%;
-    }
+    .date-picker-wrap input { width: 100%; }
 
     #planningDateDisplay {
       cursor: pointer;
@@ -100,7 +93,7 @@
     #planningDate {
       position: absolute;
       inset: 0;
-      opacity: 0.01;
+      opacity: .01;
       cursor: pointer;
       min-height: 42px;
     }
@@ -112,16 +105,8 @@
       gap: 15px;
     }
 
-    .score-main {
-      font-size: 34px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .score-label {
-      margin-top: 7px;
-      color: var(--muted);
-    }
+    .score-main { font-size: 34px; font-weight: 800; line-height: 1; }
+    .score-label { margin-top: 7px; color: var(--muted); }
 
     .score-status {
       min-width: 150px;
@@ -133,15 +118,8 @@
       color: var(--ok);
     }
 
-    .score-status.warning {
-      background: #fff7ed;
-      color: var(--warning);
-    }
-
-    .score-status.danger {
-      background: #fef3f2;
-      color: var(--danger);
-    }
+    .score-status.warning { background: #fff7ed; color: var(--warning); }
+    .score-status.danger { background: #fef3f2; color: var(--danger); }
 
     .progress {
       height: 12px;
@@ -153,19 +131,17 @@
 
     .progress-bar {
       height: 100%;
-      width: 0%;
+      width: 0;
       background: #2e8b57;
-      transition: width 0.2s ease, background 0.2s ease;
+      transition: width .2s ease, background .2s ease;
     }
 
-    .planner {
-      overflow-x: auto;
-    }
+    .planner { overflow-x: auto; }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 820px;
+      min-width: 900px;
     }
 
     th {
@@ -187,20 +163,26 @@
     tr.red td { background: var(--red); }
     tr.green td { background: var(--green); }
 
-    .color-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      display: inline-block;
-      border: 1px solid rgba(0,0,0,0.15);
-      vertical-align: middle;
-      margin-right: 8px;
+    tr.dragging {
+      opacity: .72;
+      box-shadow: 0 8px 22px rgba(0,0,0,.18);
     }
 
-    .dot-yellow { background: #f4d63f; }
-    .dot-blue { background: #4da3e2; }
-    .dot-red { background: #e05858; }
-    .dot-green { background: #55aa66; }
+    tr.drop-before td { border-top: 4px solid #2447a5; }
+    tr.drop-after td { border-bottom: 4px solid #2447a5; }
+
+    .drag-handle {
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      font-size: 24px;
+      line-height: 1;
+      text-align: center;
+      color: #475467;
+      padding: 8px;
+    }
+
+    .drag-handle:active { cursor: grabbing; }
 
     .points-cell {
       font-weight: 800;
@@ -208,9 +190,7 @@
       font-size: 17px;
     }
 
-    .row-actions {
-      text-align: center;
-    }
+    .row-actions { text-align: center; }
 
     button {
       border: none;
@@ -226,53 +206,23 @@
       white-space: nowrap;
     }
 
-    .btn-add {
-      margin-top: 16px;
-      background: #2447a5;
-      color: #fff;
-    }
+    .btn-add { background: #2447a5; color: #fff; }
+    .btn-save { background: #18794e; color: #fff; }
 
-    .btn-remove {
-      background: rgba(255,255,255,0.72);
-      color: #8a1c1c;
-      border: 1px solid rgba(138,28,28,0.25);
-      padding: 8px 10px;
-    }
-
-    .btn-clear,
-    .btn-load,
-    .btn-print {
+    .btn-clear, .btn-load, .btn-print {
       background: #fff;
       color: #344054;
       border: 1px solid var(--border);
     }
 
-    .btn-save {
-      background: #18794e;
-      color: #fff;
-    }
+    .btn-load { color: #2447a5; }
+    .btn-print { color: #6941c6; }
 
-    .btn-load {
-      color: #2447a5;
-    }
-
-    .btn-print {
-      color: #6941c6;
-    }
-
-    .save-status {
-      margin-left: auto;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--muted);
-    }
-
-    .save-status.saved {
-      color: var(--ok);
-    }
-
-    .save-status.not-found {
-      color: var(--warning);
+    .btn-remove {
+      background: rgba(255,255,255,.72);
+      color: #8a1c1c;
+      border: 1px solid rgba(138,28,28,.25);
+      padding: 8px 10px;
     }
 
     .footer-actions {
@@ -281,14 +231,22 @@
       gap: 8px;
       align-items: center;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding: 16px 0 4px;
       -webkit-overflow-scrolling: touch;
     }
 
-    .footer-actions button {
-      flex: 0 0 auto;
-      margin: 0;
+    .footer-actions button { flex: 0 0 auto; }
+
+    .save-status {
+      margin-left: auto;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      min-width: max-content;
     }
+
+    .save-status.saved { color: var(--ok); }
+    .save-status.not-found { color: var(--warning); }
 
     .legend {
       display: flex;
@@ -299,148 +257,165 @@
       font-size: 14px;
     }
 
-    .legend span {
-      display: inline-flex;
+    .legend span { display: inline-flex; align-items: center; }
+
+    .color-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid rgba(0,0,0,.15);
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    .dot-green { background: #55aa66; }
+    .dot-yellow { background: #f4d63f; }
+    .dot-blue { background: #4da3e2; }
+    .dot-red { background: #e05858; }
+
+    .catalog-card { margin-top: 18px; }
+
+    .activity-columns {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .activity-column {
+      border-radius: 12px;
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .activity-column.green { background: var(--green); }
+    .activity-column.yellow { background: var(--yellow); }
+    .activity-column.blue { background: var(--blue); }
+    .activity-column.red { background: var(--red); }
+
+    .activity-column h3 {
+      margin: 0 0 10px;
+      font-size: 17px;
+    }
+
+    .catalog-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .catalog-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(36,48,66,.12);
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .catalog-item span { flex: 1; }
+
+    .custom-remove {
+      flex: 0 0 auto;
+      min-height: 28px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      color: #8a1c1c;
+      background: rgba(255,255,255,.65);
+      border: 1px solid rgba(138,28,28,.2);
+      font-size: 13px;
+    }
+
+    .add-custom-row {
+      margin-top: 10px;
+      display: flex;
+      gap: 6px;
       align-items: center;
     }
 
-    .explanation {
-      margin-top: 20px;
-      line-height: 1.5;
+    .custom-input {
+      min-width: 0;
+      font-style: italic;
+    }
+
+    .custom-input::placeholder { color: #8a94a6; }
+
+    .confirm-custom {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 8px 11px;
+      background: rgba(255,255,255,.8);
+      color: #18794e;
+      border: 1px solid rgba(24,121,78,.28);
+      font-size: 18px;
+    }
+
+    .drag-help {
+      margin: 12px 0 0;
       color: var(--muted);
       font-size: 14px;
     }
 
+    .explanation { margin-top: 20px; font-size: 14px; }
+
+    @media (max-width: 900px) {
+      .activity-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
     @media (max-width: 720px) {
-      .topbar {
-        grid-template-columns: 1fr;
-      }
+      .topbar { grid-template-columns: 1fr; }
+      .score-card { align-items: flex-start; flex-direction: column; }
+      h1 { font-size: 25px; }
+    }
 
-      .score-card {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      h1 {
-        font-size: 25px;
-      }
+    @media (max-width: 560px) {
+      .activity-columns { grid-template-columns: 1fr; }
+      .date-picker-wrap { width: 100%; }
     }
 
     @media print {
-      @page {
-        size: A4 portrait;
-        margin: 14mm;
-      }
+      @page { size: A4 portrait; margin: 14mm; }
 
-      body {
-        background: #fff;
-        color: #000;
-      }
+      body { background: #fff; color: #000; }
+      .container { margin: 0; padding: 0; max-width: none; }
+      h1 { margin-top: 0; font-size: 24px; }
 
-      .container {
-        margin: 0;
-        padding: 0;
-        max-width: none;
-      }
-
-      h1 {
-        margin-top: 0;
-        font-size: 24px;
-      }
-
-      .intro,
-      .explanation,
-      .legend,
-      .footer-actions,
-      .row-actions,
-      th:last-child,
-      td:last-child {
+      .intro, .explanation, .legend, .footer-actions, .row-actions,
+      .drag-col, .catalog-card, .drag-help,
+      th:last-child, td:last-child {
         display: none !important;
       }
 
-      .topbar {
-        display: block;
-        margin: 12px 0 18px;
-      }
+      .topbar { display: block; margin: 12px 0 18px; }
+      .topbar .card:first-child { padding: 0 0 12px; border: none; }
+      .topbar .card:first-child label { display: inline; margin-right: 8px; }
 
-      .topbar .card:first-child {
-        padding: 0 0 12px;
-        border: none;
-      }
-
-      .topbar .card:first-child label {
-        display: inline;
-        margin-right: 8px;
-      }
-
-      .date-picker-wrap {
-        display: inline-block;
-        width: auto;
-        min-width: 0;
-      }
-
+      .date-picker-wrap { display: inline-block; width: auto; min-width: 0; }
       #planningDateDisplay {
-        display: inline-block;
-        width: auto;
-        border: none;
-        padding: 0;
-        font-weight: 700;
-        font-size: 16px;
+        display: inline-block; width: auto; border: none; padding: 0;
+        font-weight: 700; font-size: 16px;
       }
+      #planningDate { display: none; }
 
-      #planningDate {
-        display: none;
-      }
-
-      .score-card {
-        flex-direction: row;
-        align-items: center;
-      }
-
-      .progress {
-        display: none;
-      }
-
-      .card {
-        box-shadow: none;
-        border: 1px solid #aaa;
-        border-radius: 8px;
-      }
-
-      .planner {
-        padding: 0;
-        overflow: visible;
-        border: none;
-      }
-
-      table {
-        min-width: 0;
-        font-size: 13px;
-      }
-
-      th,
-      td {
-        padding: 8px;
-        border: 1px solid #aaa;
-      }
+      .score-card { flex-direction: row; align-items: center; }
+      .progress { display: none; }
+      .card { box-shadow: none; border: 1px solid #aaa; border-radius: 8px; }
+      .planner { padding: 0; overflow: visible; border: none; }
+      table { min-width: 0; font-size: 13px; }
+      th, td { padding: 8px; border: 1px solid #aaa; }
 
       select {
-        appearance: none;
-        -webkit-appearance: none;
-        border: none;
-        padding: 0;
-        background: transparent;
-        font-size: 13px;
+        appearance: none; -webkit-appearance: none; border: none;
+        padding: 0; background: transparent; font-size: 13px;
       }
 
       tr.yellow td { background: #fff8c9 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
       tr.blue td { background: #d9efff !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
       tr.red td { background: #ffe0e0 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
       tr.green td { background: #dff4e1 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-
-      .score-status {
-        border: 1px solid #aaa;
-      }
+      .score-status { border: 1px solid #aaa; }
     }
   </style>
 </head>
@@ -469,9 +444,7 @@
           </div>
           <div id="scoreStatus" class="score-status">Nog 29 punten over</div>
         </div>
-        <div class="progress" aria-label="Voortgang punten">
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
+        <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
       </div>
     </section>
 
@@ -479,11 +452,12 @@
       <table>
         <thead>
           <tr>
-            <th style="width: 20%">Kleur</th>
-            <th style="width: 34%">Activiteit</th>
-            <th style="width: 20%">Duur</th>
-            <th style="width: 14%">Punten</th>
-            <th style="width: 12%">Verwijderen</th>
+            <th class="drag-col" style="width:5%">Volgorde</th>
+            <th style="width:20%">Kleur</th>
+            <th style="width:35%">Activiteit</th>
+            <th style="width:18%">Duur</th>
+            <th style="width:12%">Punten</th>
+            <th style="width:10%">Verwijderen</th>
           </tr>
         </thead>
         <tbody id="activityRows"></tbody>
@@ -498,12 +472,23 @@
         <span id="saveStatus" class="save-status" aria-live="polite"></span>
       </div>
 
+      <p class="drag-help">Houd het symbool ☰ vast en sleep een activiteit omhoog of omlaag om de volgorde te veranderen.</p>
+
       <div class="legend">
+        <span><i class="color-dot dot-green"></i>Groen: 0 punten per halfuur</span>
         <span><i class="color-dot dot-yellow"></i>Geel: 1 punt per halfuur</span>
         <span><i class="color-dot dot-blue"></i>Blauw: 2 punten per halfuur</span>
         <span><i class="color-dot dot-red"></i>Rood: 3 punten per halfuur</span>
-        <span><i class="color-dot dot-green"></i>Groen: 0 punten per halfuur</span>
       </div>
+    </section>
+
+    <section class="card catalog-card">
+      <h2>Activiteiten per kleur</h2>
+      <p class="section-intro">
+        Voeg onderaan een kolom een eigen activiteit toe. Eigen activiteiten worden alleen
+        in deze browser bewaard en verschijnen daarna ook in de keuzelijst van de dagplanner.
+      </p>
+      <div id="activityColumns" class="activity-columns"></div>
     </section>
 
     <p class="explanation">
@@ -514,10 +499,20 @@
 
   <script>
     const MAX_POINTS = 29;
+    const COLOR_ORDER = ["green", "yellow", "blue", "red"];
+    const STORAGE_PREFIX = "dagplanner-";
+    const CUSTOM_KEY = "dagplanner-custom-activities-v1";
 
-    const activityGroups = {
+    const baseActivityGroups = {
+      green: {
+        label: "Groen – 0 punten",
+        shortLabel: "Groen",
+        points: 0,
+        activities: ["Thee drinken", "Slapen op de bank", "TV kijken"]
+      },
       yellow: {
         label: "Geel – 1 punt",
+        shortLabel: "Geel",
         points: 1,
         activities: [
           "Ontbijt / Lunch / avondeten",
@@ -531,6 +526,7 @@
       },
       blue: {
         label: "Blauw – 2 punten",
+        shortLabel: "Blauw",
         points: 2,
         activities: [
           "Opstaan",
@@ -543,6 +539,7 @@
       },
       red: {
         label: "Rood – 3 punten",
+        shortLabel: "Rood",
         points: 3,
         activities: [
           "Zwaar huishoudelijke werkzaamheden",
@@ -553,50 +550,51 @@
           "Paardrijles geven",
           "Zelf autorijden > 1/2 uur"
         ]
-      },
-      green: {
-        label: "Groen – 0 punten",
-        points: 0,
-        activities: [
-          "Thee drinken",
-          "Slapen op de bank",
-          "TV kijken"
-        ]
       }
     };
 
     const rowsContainer = document.getElementById("activityRows");
+    const activityColumns = document.getElementById("activityColumns");
     const totalPointsElement = document.getElementById("totalPoints");
     const scoreStatusElement = document.getElementById("scoreStatus");
     const progressBarElement = document.getElementById("progressBar");
     const dateInput = document.getElementById("planningDate");
     const dateDisplayInput = document.getElementById("planningDateDisplay");
     const saveStatusElement = document.getElementById("saveStatus");
-    const STORAGE_PREFIX = "dagplanner-";
+
     const memoryStorage = {};
-    let storageAvailable = true;
+    let customActivities = emptyCustomActivities();
+    let draggedRow = null;
+    let dragPointerId = null;
+
+    function emptyCustomActivities() {
+      return { green: [], yellow: [], blue: [], red: [] };
+    }
 
     function safeStorageGet(key) {
       try {
         return window.localStorage.getItem(key);
       } catch (error) {
-        storageAvailable = false;
-        return Object.prototype.hasOwnProperty.call(memoryStorage, key)
-          ? memoryStorage[key]
-          : null;
+        return Object.prototype.hasOwnProperty.call(memoryStorage, key) ? memoryStorage[key] : null;
       }
     }
 
     function safeStorageSet(key, value) {
       try {
         window.localStorage.setItem(key, value);
-        storageAvailable = true;
         return true;
       } catch (error) {
-        storageAvailable = false;
         memoryStorage[key] = value;
         return false;
       }
+    }
+
+    function getActivities(color) {
+      return [...baseActivityGroups[color].activities, ...customActivities[color]];
+    }
+
+    function findActivityColor(activity) {
+      return COLOR_ORDER.find(color => getActivities(color).includes(activity)) || null;
     }
 
     function storageKey(date) {
@@ -606,6 +604,343 @@
     function showSaveStatus(message, className = "") {
       saveStatusElement.textContent = message;
       saveStatusElement.className = `save-status ${className}`.trim();
+    }
+
+    function formatDutchDate(dateValue) {
+      if (!dateValue) return "";
+      const [year, month, day] = dateValue.split("-").map(Number);
+      const date = new Date(year, month - 1, day);
+      const formatted = new Intl.DateTimeFormat("nl-NL", {
+        weekday: "long", day: "numeric", month: "short", year: "numeric"
+      }).format(date);
+      return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    }
+
+    function updateDateDisplay() {
+      dateDisplayInput.value = formatDutchDate(dateInput.value);
+    }
+
+    function setToday() {
+      const today = new Date();
+      const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+        .toISOString().split("T")[0];
+      dateInput.value = localDate;
+      updateDateDisplay();
+    }
+
+    function loadCustomActivities() {
+      const saved = safeStorageGet(CUSTOM_KEY);
+      if (!saved) return;
+      try {
+        const parsed = JSON.parse(saved);
+        COLOR_ORDER.forEach(color => {
+          if (Array.isArray(parsed[color])) {
+            customActivities[color] = parsed[color].filter(item => typeof item === "string" && item.trim());
+          }
+        });
+      } catch (error) {
+        customActivities = emptyCustomActivities();
+      }
+    }
+
+    function saveCustomActivities() {
+      safeStorageSet(CUSTOM_KEY, JSON.stringify(customActivities));
+    }
+
+    function renderCatalog() {
+      activityColumns.innerHTML = "";
+
+      COLOR_ORDER.forEach(color => {
+        const group = baseActivityGroups[color];
+        const column = document.createElement("section");
+        column.className = `activity-column ${color}`;
+
+        const heading = document.createElement("h3");
+        heading.textContent = `${group.shortLabel} – ${group.points} ${group.points === 1 ? "punt" : "punten"}`;
+        column.appendChild(heading);
+
+        const list = document.createElement("ul");
+        list.className = "catalog-list";
+
+        group.activities.forEach(activity => {
+          const item = document.createElement("li");
+          item.className = "catalog-item";
+          item.innerHTML = `<span>${escapeHtml(activity)}</span>`;
+          list.appendChild(item);
+        });
+
+        customActivities[color].forEach(activity => {
+          const item = document.createElement("li");
+          item.className = "catalog-item";
+          const text = document.createElement("span");
+          text.textContent = activity;
+
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "custom-remove";
+          remove.textContent = "✕";
+          remove.setAttribute("aria-label", `${activity} verwijderen`);
+          remove.addEventListener("click", () => removeCustomActivity(color, activity));
+
+          item.append(text, remove);
+          list.appendChild(item);
+        });
+
+        column.appendChild(list);
+
+        const addRow = document.createElement("div");
+        addRow.className = "add-custom-row";
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "custom-input";
+        input.placeholder = "Zelf toevoegen";
+        input.setAttribute("aria-label", `Zelf activiteit toevoegen aan ${group.shortLabel}`);
+
+        const confirm = document.createElement("button");
+        confirm.type = "button";
+        confirm.className = "confirm-custom";
+        confirm.textContent = "✓";
+        confirm.setAttribute("aria-label", "Activiteit bevestigen");
+
+        const submit = () => addCustomActivity(color, input);
+        confirm.addEventListener("click", submit);
+        input.addEventListener("keydown", event => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            submit();
+          }
+        });
+
+        addRow.append(input, confirm);
+        column.appendChild(addRow);
+        activityColumns.appendChild(column);
+      });
+    }
+
+    function addCustomActivity(color, input) {
+      const value = input.value.trim();
+      if (!value) return;
+
+      const alreadyExists = COLOR_ORDER.some(category =>
+        getActivities(category).some(item => item.toLocaleLowerCase("nl-NL") === value.toLocaleLowerCase("nl-NL"))
+      );
+
+      if (alreadyExists) {
+        input.setCustomValidity("Deze activiteit bestaat al.");
+        input.reportValidity();
+        input.setCustomValidity("");
+        return;
+      }
+
+      customActivities[color].push(value);
+      saveCustomActivities();
+      renderCatalog();
+      refreshAllActivityMenus();
+      showSaveStatus("Eigen activiteit toegevoegd.", "saved");
+    }
+
+    function removeCustomActivity(color, activity) {
+      customActivities[color] = customActivities[color].filter(item => item !== activity);
+      saveCustomActivities();
+      renderCatalog();
+      refreshAllActivityMenus();
+      showSaveStatus("Eigen activiteit verwijderd.", "saved");
+    }
+
+    function createColorOptions(selectedColor = "") {
+      let html = `<option value="">Kies een kleur</option>`;
+
+      html += COLOR_ORDER.map(color => {
+        const selected = color === selectedColor ? " selected" : "";
+        return `<option value="${color}"${selected}>${baseActivityGroups[color].label}</option>`;
+      }).join("");
+
+      return html;
+    }
+
+    function createActivityOptions(selectedActivity = "", filterColor = "", rowColor = "") {
+      let html = `<option value="">Kies een activiteit</option>`;
+
+      const colorsToShow = filterColor ? [filterColor] : COLOR_ORDER;
+
+      colorsToShow.forEach(color => {
+        const activities = getActivities(color);
+        if (!activities.length) return;
+
+        if (!filterColor) {
+          html += `<optgroup label="${baseActivityGroups[color].label}">`;
+        }
+
+        activities.forEach(activity => {
+          const selected = activity === selectedActivity ? " selected" : "";
+          html += `<option value="${escapeAttribute(activity)}" data-color="${color}"${selected}>${escapeHtml(activity)}</option>`;
+        });
+
+        if (!filterColor) {
+          html += "</optgroup>";
+        }
+      });
+
+      if (selectedActivity && !findActivityColor(selectedActivity)) {
+        html += `<optgroup label="Eerder gebruikte activiteit"><option value="${escapeAttribute(selectedActivity)}" data-color="${rowColor}" selected>${escapeHtml(selectedActivity)}</option></optgroup>`;
+      }
+
+      return html;
+    }
+
+    function createDurationOptions(selected = 1) {
+      let options = "";
+      for (let halfHours = 1; halfHours <= 16; halfHours++) {
+        const hours = halfHours / 2;
+        const label = Number.isInteger(hours)
+          ? `${hours} uur`
+          : `${Math.floor(hours)} uur 30 min`;
+        options += `<option value="${halfHours}"${halfHours === Number(selected) ? " selected" : ""}>${label} (${halfHours} × 30 min)</option>`;
+      }
+      return options;
+    }
+
+    function addRow(color = "", duration = 1, activity = "") {
+      const knownActivityColor = activity ? findActivityColor(activity) : null;
+      const actualColor = knownActivityColor || color || "";
+      const row = document.createElement("tr");
+      row.className = actualColor || "";
+
+      row.innerHTML = `
+        <td class="drag-col"><div class="drag-handle" role="button" tabindex="0" aria-label="Versleep activiteit">☰</div></td>
+        <td><select class="color-select" aria-label="Kleurcategorie">${createColorOptions(actualColor)}</select></td>
+        <td><select class="activity-select" aria-label="Activiteit">${createActivityOptions(activity, color && !activity ? color : "", actualColor)}</select></td>
+        <td><select class="duration-select" aria-label="Duur">${createDurationOptions(duration)}</select></td>
+        <td class="points-cell">0</td>
+        <td class="row-actions"><button type="button" class="btn-remove" aria-label="Activiteit verwijderen">✕</button></td>
+      `;
+
+      const colorSelect = row.querySelector(".color-select");
+      const activitySelect = row.querySelector(".activity-select");
+      const durationSelect = row.querySelector(".duration-select");
+
+      colorSelect.addEventListener("change", () => {
+        const selectedColor = colorSelect.value;
+        row.className = selectedColor || "";
+
+        if (!selectedColor) {
+          activitySelect.innerHTML = createActivityOptions("", "", "");
+        } else {
+          activitySelect.innerHTML = createActivityOptions("", selectedColor, selectedColor);
+        }
+
+        markUnsaved();
+        updateTotals();
+      });
+
+      activitySelect.addEventListener("change", () => {
+        const option = activitySelect.options[activitySelect.selectedIndex];
+        const selectedColor = option?.dataset?.color || "";
+
+        if (selectedColor) {
+          colorSelect.value = selectedColor;
+          row.className = selectedColor;
+        } else if (!activitySelect.value) {
+          row.className = colorSelect.value || "";
+        }
+
+        markUnsaved();
+        updateTotals();
+      });
+
+      durationSelect.addEventListener("change", () => {
+        markUnsaved();
+        updateTotals();
+      });
+
+      row.querySelector(".btn-remove").addEventListener("click", () => {
+        row.remove();
+        markUnsaved();
+        updateTotals();
+      });
+
+      setupRowDragging(row);
+      rowsContainer.appendChild(row);
+      updateTotals();
+    }
+
+    function refreshAllActivityMenus() {
+      rowsContainer.querySelectorAll("tr").forEach(row => {
+        const activitySelect = row.querySelector(".activity-select");
+        const colorSelect = row.querySelector(".color-select");
+        const currentActivity = activitySelect.value;
+        const selectedColor = colorSelect.value;
+        const knownColor = currentActivity ? findActivityColor(currentActivity) : null;
+
+        const filterColor = currentActivity ? "" : selectedColor;
+        activitySelect.innerHTML = createActivityOptions(
+          currentActivity,
+          filterColor,
+          knownColor || selectedColor
+        );
+        activitySelect.value = currentActivity;
+      });
+    }
+
+    function setupRowDragging(row) {
+      const handle = row.querySelector(".drag-handle");
+
+      handle.addEventListener("pointerdown", event => {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        draggedRow = row;
+        dragPointerId = event.pointerId;
+        handle.setPointerCapture(event.pointerId);
+        row.classList.add("dragging");
+        event.preventDefault();
+      });
+
+      handle.addEventListener("pointermove", event => {
+        if (!draggedRow || event.pointerId !== dragPointerId) return;
+
+        clearDropIndicators();
+        const target = document.elementFromPoint(event.clientX, event.clientY)?.closest("tr");
+        if (!target || target === draggedRow || target.parentElement !== rowsContainer) return;
+
+        const rect = target.getBoundingClientRect();
+        const before = event.clientY < rect.top + rect.height / 2;
+        target.classList.add(before ? "drop-before" : "drop-after");
+
+        if (before) {
+          rowsContainer.insertBefore(draggedRow, target);
+        } else {
+          rowsContainer.insertBefore(draggedRow, target.nextSibling);
+        }
+      });
+
+      const finish = event => {
+        if (!draggedRow || (event.pointerId !== undefined && event.pointerId !== dragPointerId)) return;
+        draggedRow.classList.remove("dragging");
+        clearDropIndicators();
+        draggedRow = null;
+        dragPointerId = null;
+        markUnsaved();
+      };
+
+      handle.addEventListener("pointerup", finish);
+      handle.addEventListener("pointercancel", finish);
+
+      handle.addEventListener("keydown", event => {
+        if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+        event.preventDefault();
+        if (event.key === "ArrowUp" && row.previousElementSibling) {
+          rowsContainer.insertBefore(row, row.previousElementSibling);
+        } else if (event.key === "ArrowDown" && row.nextElementSibling) {
+          rowsContainer.insertBefore(row.nextElementSibling, row);
+        }
+        markUnsaved();
+      });
+    }
+
+    function clearDropIndicators() {
+      rowsContainer.querySelectorAll(".drop-before, .drop-after").forEach(row => {
+        row.classList.remove("drop-before", "drop-after");
+      });
     }
 
     function getPlanningData() {
@@ -623,29 +958,23 @@
         return;
       }
 
-      const planning = {
+      safeStorageSet(storageKey(date), JSON.stringify({
         date,
         rows: getPlanningData(),
         savedAt: new Date().toISOString()
-      };
+      }));
 
-      const permanentlySaved = safeStorageSet(storageKey(date), JSON.stringify(planning));
-      if (permanentlySaved) {
-        showSaveStatus("Planning opgeslagen voor deze datum.", "saved");
-      } else {
-        showSaveStatus("Tijdelijk opgeslagen. Open de planner in Safari voor blijvende opslag.", "not-found");
-      }
+      showSaveStatus("Planning opgeslagen voor deze datum.", "saved");
     }
 
     function loadPlanning(showMessage = true) {
       const date = dateInput.value;
-      if (!date) {
-        if (showMessage) showSaveStatus("Kies eerst een datum.", "not-found");
-        return false;
-      }
+      if (!date) return false;
 
       const saved = safeStorageGet(storageKey(date));
       if (!saved) {
+        rowsContainer.innerHTML = "";
+        updateTotals();
         if (showMessage) showSaveStatus("Voor deze datum is nog niets opgeslagen.", "not-found");
         return false;
       }
@@ -653,131 +982,20 @@
       try {
         const planning = JSON.parse(saved);
         rowsContainer.innerHTML = "";
-
-        planning.rows.forEach(item => {
-          const validColor = activityGroups[item.color] ? item.color : "yellow";
-          const validActivity = activityGroups[validColor].activities.includes(item.activity)
-            ? item.activity
-            : activityGroups[validColor].activities[0];
-          addRow(validColor, item.duration || 1, validActivity);
-        });
-
-        if (planning.rows.length === 0) addRow();
+        (planning.rows || []).forEach(item => addRow(
+          baseActivityGroups[item.color] ? item.color : "",
+          item.duration || 1,
+          item.activity || ""
+        ));
         updateTotals();
-
         if (showMessage) showSaveStatus("Opgeslagen planning opgehaald.", "saved");
         return true;
       } catch (error) {
+        rowsContainer.innerHTML = "";
+        updateTotals();
         if (showMessage) showSaveStatus("De opgeslagen planning kon niet worden gelezen.", "not-found");
         return false;
       }
-    }
-
-    function formatDutchDate(dateValue) {
-      if (!dateValue) return "";
-
-      const [year, month, day] = dateValue.split("-").map(Number);
-      const date = new Date(year, month - 1, day);
-
-      const formatted = new Intl.DateTimeFormat("nl-NL", {
-        weekday: "long",
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-      }).format(date);
-
-      return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-    }
-
-    function updateDateDisplay() {
-      dateDisplayInput.value = formatDutchDate(dateInput.value);
-    }
-
-    function setToday() {
-      const today = new Date();
-      const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
-        .toISOString()
-        .split("T")[0];
-      dateInput.value = localDate;
-      updateDateDisplay();
-    }
-
-    function createDurationOptions() {
-      let options = "";
-      for (let halfHours = 1; halfHours <= 16; halfHours++) {
-        const hours = halfHours / 2;
-        const label = Number.isInteger(hours)
-          ? `${hours} uur`
-          : `${Math.floor(hours)} uur 30 min`;
-
-        options += `<option value="${halfHours}">${label} (${halfHours} × 30 min)</option>`;
-      }
-      return options;
-    }
-
-    function createColorOptions(selectedColor = "yellow") {
-      return Object.entries(activityGroups)
-        .map(([key, group]) =>
-          `<option value="${key}" ${key === selectedColor ? "selected" : ""}>${group.label}</option>`
-        )
-        .join("");
-    }
-
-    function createActivityOptions(color, selectedActivity = "") {
-      return activityGroups[color].activities
-        .map(activity =>
-          `<option value="${activity}" ${activity === selectedActivity ? "selected" : ""}>${activity}</option>`
-        )
-        .join("");
-    }
-
-    function addRow(color = "yellow", duration = 1, activity = "") {
-      const row = document.createElement("tr");
-      row.className = color;
-
-      const selectedActivity = activity || activityGroups[color].activities[0];
-
-      row.innerHTML = `
-        <td>
-          <select class="color-select" aria-label="Kleurcategorie">
-            ${createColorOptions(color)}
-          </select>
-        </td>
-        <td>
-          <select class="activity-select" aria-label="Activiteit">
-            ${createActivityOptions(color, selectedActivity)}
-          </select>
-        </td>
-        <td>
-          <select class="duration-select" aria-label="Duur">
-            ${createDurationOptions()}
-          </select>
-        </td>
-        <td class="points-cell">0</td>
-        <td class="row-actions">
-          <button type="button" class="btn-remove" aria-label="Activiteit verwijderen">✕</button>
-        </td>
-      `;
-
-      row.querySelector(".duration-select").value = duration;
-
-      row.querySelector(".color-select").addEventListener("change", event => {
-        const newColor = event.target.value;
-        row.className = newColor;
-        row.querySelector(".activity-select").innerHTML = createActivityOptions(newColor);
-        updateTotals();
-      });
-
-      row.querySelector(".activity-select").addEventListener("change", updateTotals);
-      row.querySelector(".duration-select").addEventListener("change", updateTotals);
-
-      row.querySelector(".btn-remove").addEventListener("click", () => {
-        row.remove();
-        updateTotals();
-      });
-
-      rowsContainer.appendChild(row);
-      updateTotals();
     }
 
     function updateTotals() {
@@ -785,19 +1003,18 @@
 
       rowsContainer.querySelectorAll("tr").forEach(row => {
         const color = row.querySelector(".color-select").value;
-        const durationHalfHours = Number(row.querySelector(".duration-select").value);
-        const points = activityGroups[color].points * durationHalfHours;
-
+        const duration = Number(row.querySelector(".duration-select").value);
+        const activity = row.querySelector(".activity-select").value;
+        const points = activity && color && baseActivityGroups[color]
+          ? baseActivityGroups[color].points * duration
+          : 0;
         row.querySelector(".points-cell").textContent = points;
         total += points;
       });
 
       totalPointsElement.textContent = total;
-
       const remaining = MAX_POINTS - total;
-      const percentage = Math.min((total / MAX_POINTS) * 100, 100);
-      progressBarElement.style.width = `${percentage}%`;
-
+      progressBarElement.style.width = `${Math.min((total / MAX_POINTS) * 100, 100)}%`;
       scoreStatusElement.classList.remove("warning", "danger");
 
       if (total > MAX_POINTS) {
@@ -814,9 +1031,26 @@
       }
     }
 
+    function markUnsaved() {
+      showSaveStatus("Wijzigingen zijn nog niet opgeslagen.");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeAttribute(value) {
+      return escapeHtml(value);
+    }
+
     document.getElementById("addRowButton").addEventListener("click", () => {
       addRow();
-      showSaveStatus("Wijzigingen zijn nog niet opgeslagen.");
+      markUnsaved();
     });
 
     document.getElementById("saveButton").addEventListener("click", savePlanning);
@@ -825,41 +1059,28 @@
 
     document.getElementById("clearButton").addEventListener("click", () => {
       rowsContainer.innerHTML = "";
-      addRow();
+      updateTotals();
       showSaveStatus("Planning leeggemaakt; nog niet opgeslagen.");
     });
 
     dateInput.addEventListener("change", () => {
       updateDateDisplay();
-      rowsContainer.innerHTML = "";
-      if (!loadPlanning(false)) {
-        addRow("yellow", 1, "Ontbijt / Lunch / avondeten");
-        addRow("blue", 1, "Wassen en aankleden");
-        showSaveStatus("Nieuwe, nog niet opgeslagen planning.");
-      } else {
-        showSaveStatus("Opgeslagen planning voor deze datum geladen.", "saved");
-      }
+      const loaded = loadPlanning(false);
+      showSaveStatus(
+        loaded ? "Opgeslagen planning voor deze datum geladen." : "Nieuwe lege planning.",
+        loaded ? "saved" : ""
+      );
     });
 
-    rowsContainer.addEventListener("change", () => {
-      showSaveStatus("Wijzigingen zijn nog niet opgeslagen.");
-    });
-
+    loadCustomActivities();
+    renderCatalog();
     setToday();
-    try {
-      const testKey = STORAGE_PREFIX + "test";
-      window.localStorage.setItem(testKey, "1");
-      window.localStorage.removeItem(testKey);
-    } catch (error) {
-      storageAvailable = false;
-    }
 
-    if (!loadPlanning(false)) {
-      addRow("yellow", 1, "Ontbijt / Lunch / avondeten");
-      addRow("blue", 1, "Wassen en aankleden");
-    } else {
-      showSaveStatus("Opgeslagen planning voor vandaag geladen.", "saved");
-    }
+    const loadedToday = loadPlanning(false);
+    showSaveStatus(
+      loadedToday ? "Opgeslagen planning voor vandaag geladen." : "Nieuwe lege planning.",
+      loadedToday ? "saved" : ""
+    );
   </script>
 </body>
 </html>
