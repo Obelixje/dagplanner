@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dagplanner activiteiten en punten V2.1</title>
+  <title>Dagplanner activiteiten en punten V2.2</title>
   <style>
     :root {
       --yellow: #fff3a6;
@@ -428,6 +428,10 @@
       min-height: 45px;
     }
 
+    .print-continuation {
+      display: none;
+    }
+
     .explanation { margin-top: 20px; font-size: 14px; }
 
     @media (max-width: 900px) {
@@ -486,9 +490,22 @@
         page-break-inside: avoid;
       }
 
-      tbody tr:nth-child(15) {
+      .print-continuation {
+        display: block !important;
         break-before: page;
         page-break-before: always;
+        margin-top: 0;
+      }
+
+      .print-continuation:empty {
+        display: none !important;
+      }
+
+      .print-continuation table {
+        width: 100%;
+        min-width: 0;
+        border-collapse: collapse;
+        font-size: 13px;
       }
 
       tr.yellow td { background: #fff8c9 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -521,7 +538,7 @@
 </head>
 <body>
   <main class="container">
-    <h1>Dagplanner activiteiten V2.1</h1>
+    <h1>Dagplanner activiteiten V2.2</h1>
     <p class="intro">
       Plan activiteiten per halfuur. De punten van een activiteit worden vermenigvuldigd
       met het aantal gekozen halve uren. Het dagmaximum is 29 punten.
@@ -562,6 +579,8 @@
         </thead>
         <tbody id="activityRows"></tbody>
       </table>
+
+      <div id="printContinuation" class="print-continuation"></div>
 
       <div class="footer-actions">
         <button class="btn-add" type="button" id="addRowButton">+ Activiteit toevoegen</button>
@@ -678,6 +697,8 @@
     const saveStatusElement = document.getElementById("saveStatus");
     const remarksInput = document.getElementById("remarksInput");
     const remarksPrint = document.getElementById("remarksPrint");
+    const printContinuation = document.getElementById("printContinuation");
+    let printMovedRows = [];
 
     const memoryStorage = {};
     let customActivities = emptyCustomActivities();
@@ -1187,9 +1208,48 @@
 
     remarksInput.addEventListener("input", markUnsaved);
 
+    function preparePrintPages() {
+      restorePrintRows();
+      printContinuation.innerHTML = "";
+
+      const rows = Array.from(rowsContainer.querySelectorAll("tr"));
+      const continuationRows = rows.slice(16);
+
+      if (!continuationRows.length) return;
+
+      const originalTable = rowsContainer.closest("table");
+      const continuationTable = document.createElement("table");
+      const clonedHead = originalTable.querySelector("thead").cloneNode(true);
+      const continuationBody = document.createElement("tbody");
+
+      continuationTable.appendChild(clonedHead);
+      continuationTable.appendChild(continuationBody);
+
+      continuationRows.forEach(row => {
+        printMovedRows.push(row);
+        continuationBody.appendChild(row);
+      });
+
+      printContinuation.appendChild(continuationTable);
+    }
+
+    function restorePrintRows() {
+      if (!printMovedRows.length) {
+        printContinuation.innerHTML = "";
+        return;
+      }
+
+      printMovedRows.forEach(row => rowsContainer.appendChild(row));
+      printMovedRows = [];
+      printContinuation.innerHTML = "";
+    }
+
     window.addEventListener("beforeprint", () => {
       remarksPrint.textContent = remarksInput.value;
+      preparePrintPages();
     });
+
+    window.addEventListener("afterprint", restorePrintRows);
 
     document.getElementById("addRowButton").addEventListener("click", () => {
       addRow();
