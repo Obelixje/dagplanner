@@ -369,6 +369,65 @@
       font-size: 14px;
     }
 
+    .remarks-box {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #d7dbe2;
+      border-radius: 10px;
+      background: #f3f4f6;
+    }
+
+    .remarks-box label {
+      margin-bottom: 8px;
+    }
+
+    .remarks-input-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    #remarksInput {
+      flex: 1;
+      min-height: 86px;
+      resize: vertical;
+      border: 1px solid #bcc5d3;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .remarks-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-remark-confirm,
+    .btn-remark-clear {
+      min-width: 42px;
+      padding: 8px 10px;
+    }
+
+    .btn-remark-confirm {
+      background: #18794e;
+      color: #fff;
+    }
+
+    .btn-remark-clear {
+      background: #fff;
+      color: #8a1c1c;
+      border: 1px solid rgba(138,28,28,.25);
+    }
+
+    .remarks-print {
+      display: none;
+      white-space: pre-wrap;
+      line-height: 1.45;
+      min-height: 45px;
+    }
+
     .explanation { margin-top: 20px; font-size: 14px; }
 
     @media (max-width: 900px) {
@@ -422,10 +481,40 @@
         padding: 0; background: transparent; font-size: 13px;
       }
 
+      tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      tbody tr:nth-child(15) {
+        break-before: page;
+        page-break-before: always;
+      }
+
       tr.yellow td { background: #fff8c9 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
       tr.blue td { background: #d9efff !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
       tr.red td { background: #ffe0e0 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
       tr.green td { background: #dff4e1 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+      .remarks-box {
+        margin-top: 12px;
+        padding: 10px;
+        background: #f1f1f1 !important;
+        border: 1px solid #aaa;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .remarks-input-row {
+        display: none;
+      }
+
+      .remarks-print {
+        display: block;
+      }
+
       .score-status { border: 1px solid #aaa; }
     }
   </style>
@@ -484,6 +573,18 @@
       <div class="status-row">
         <strong>Status:</strong>
         <span id="saveStatus" class="save-status" aria-live="polite"></span>
+      </div>
+
+      <div class="remarks-box">
+        <label for="remarksInput">Opmerkingen</label>
+        <div class="remarks-input-row">
+          <textarea id="remarksInput" placeholder="Typ hier een opmerking voor deze dag"></textarea>
+          <div class="remarks-actions">
+            <button type="button" id="confirmRemarksButton" class="btn-remark-confirm" aria-label="Opmerking bevestigen">✓</button>
+            <button type="button" id="clearRemarksButton" class="btn-remark-clear" aria-label="Opmerking verwijderen">✕</button>
+          </div>
+        </div>
+        <div id="remarksPrint" class="remarks-print"></div>
       </div>
 
       <p class="drag-help">Houd het symbool ☰ vast en sleep een activiteit omhoog of omlaag om de volgorde te veranderen.</p>
@@ -575,6 +676,8 @@
     const dateInput = document.getElementById("planningDate");
     const dateDisplayInput = document.getElementById("planningDateDisplay");
     const saveStatusElement = document.getElementById("saveStatus");
+    const remarksInput = document.getElementById("remarksInput");
+    const remarksPrint = document.getElementById("remarksPrint");
 
     const memoryStorage = {};
     let customActivities = emptyCustomActivities();
@@ -975,6 +1078,7 @@
       safeStorageSet(storageKey(date), JSON.stringify({
         date,
         rows: getPlanningData(),
+        remarks: remarksInput.value,
         savedAt: new Date().toISOString()
       }));
 
@@ -988,6 +1092,8 @@
       const saved = safeStorageGet(storageKey(date));
       if (!saved) {
         rowsContainer.innerHTML = "";
+        remarksInput.value = "";
+        remarksPrint.textContent = "";
         updateTotals();
         if (showMessage) showSaveStatus("Voor deze datum is nog niets opgeslagen.", "not-found");
         return false;
@@ -1001,11 +1107,15 @@
           item.duration || 1,
           item.activity || ""
         ));
+        remarksInput.value = planning.remarks || "";
+        remarksPrint.textContent = planning.remarks || "";
         updateTotals();
         if (showMessage) showSaveStatus("Opgeslagen planning opgehaald.", "saved");
         return true;
       } catch (error) {
         rowsContainer.innerHTML = "";
+        remarksInput.value = "";
+        remarksPrint.textContent = "";
         updateTotals();
         if (showMessage) showSaveStatus("De opgeslagen planning kon niet worden gelezen.", "not-found");
         return false;
@@ -1061,6 +1171,25 @@
     function escapeAttribute(value) {
       return escapeHtml(value);
     }
+
+    document.getElementById("confirmRemarksButton").addEventListener("click", () => {
+      remarksPrint.textContent = remarksInput.value;
+      markUnsaved();
+      showSaveStatus("Opmerking bevestigd; planning nog niet opgeslagen.");
+    });
+
+    document.getElementById("clearRemarksButton").addEventListener("click", () => {
+      remarksInput.value = "";
+      remarksPrint.textContent = "";
+      markUnsaved();
+      showSaveStatus("Opmerking verwijderd; planning nog niet opgeslagen.");
+    });
+
+    remarksInput.addEventListener("input", markUnsaved);
+
+    window.addEventListener("beforeprint", () => {
+      remarksPrint.textContent = remarksInput.value;
+    });
 
     document.getElementById("addRowButton").addEventListener("click", () => {
       addRow();
